@@ -9,7 +9,7 @@ public class Flip2FocusScreenTimeModule: Module {
     }
 
     AsyncFunction("getAuthorizationStatus") { () -> String in
-      ScreenTimeController.shared.currentAuthorizationStatus()
+      await ScreenTimeController.shared.currentAuthorizationStatus()
     }
 
     AsyncFunction("presentActivityPicker") { () -> [String: Int] in
@@ -18,15 +18,15 @@ public class Flip2FocusScreenTimeModule: Module {
     }
 
     AsyncFunction("getSelectedCount") { () -> Int in
-      ScreenTimeController.shared.selectedCount()
+      await ScreenTimeController.shared.selectedCount()
     }
 
     AsyncFunction("startShielding") { (sessionId: String, endsAt: Double) in
-      ScreenTimeController.shared.startShielding(sessionId: sessionId, endsAt: endsAt)
+      await ScreenTimeController.shared.startShielding(sessionId: sessionId, endsAt: endsAt)
     }
 
     AsyncFunction("stopShielding") { (sessionId: String?) in
-      ScreenTimeController.shared.stopShielding()
+      await ScreenTimeController.shared.stopShielding()
     }
 
     AsyncFunction("isShieldingActive") { () -> Bool in

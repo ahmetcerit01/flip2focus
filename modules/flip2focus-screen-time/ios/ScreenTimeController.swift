@@ -28,10 +28,10 @@ final class ScreenTimeController {
             // Authorization can also have been granted/denied by a prior
             // request; fall through and report the resulting status either way.
         }
-        return currentAuthorizationStatus()
+        return await currentAuthorizationStatus()
     }
 
-    func currentAuthorizationStatus() -> String {
+    func currentAuthorizationStatus() async -> String {
         switch AuthorizationCenter.shared.authorizationStatus {
         case .notDetermined:
             return "notDetermined"
@@ -50,11 +50,11 @@ final class ScreenTimeController {
         return Flip2FocusShared.selectedCount(selection)
     }
 
-    func selectedCount() -> Int {
+    func selectedCount() async -> Int {
         Flip2FocusShared.selectedCount(Flip2FocusShared.loadSelection())
     }
 
-    func startShielding(sessionId: String, endsAt: Double) {
+    func startShielding(sessionId: String, endsAt: Double) async {
         let selection = Flip2FocusShared.loadSelection()
         Flip2FocusShared.applyShield(selection: selection)
 
@@ -86,7 +86,7 @@ final class ScreenTimeController {
         }
     }
 
-    func stopShielding() {
+    func stopShielding() async {
         activityCenter.stopMonitoring([Flip2FocusShared.deviceActivityName])
         Flip2FocusShared.clearShield()
         Flip2FocusShared.clearActiveSession()
