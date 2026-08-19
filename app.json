@@ -1,42 +1,65 @@
 {
   "expo": {
-    "name": "__expo_scaffold",
-    "slug": "__expo_scaffold",
+    "name": "Flip2Focus",
+    "slug": "flip2focus",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "exposcaffold",
+    "icon": "./src/assets/branding/app-icon-master.png",
+    "scheme": "flip2focus",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios"],
+    "primaryColor": "#3478F6",
+    "backgroundColor": "#080D10",
     "ios": {
-      "icon": "./assets/expo.icon"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      "bundleIdentifier": "com.ahmetcerit.flip2focus",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "requireFullScreen": true,
+      "infoPlist": {
+        "UIBackgroundModes": [],
+        "NSUserNotificationsUsageDescription": "Flip2Focus notifies you when a focus session or break finishes."
       },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "entitlements": {
+        "com.apple.developer.family-controls": true,
+        "com.apple.security.application-groups": [
+          "group.com.ahmetcerit.flip2focus"
+        ]
+      }
     },
     "plugins": [
       "expo-router",
+      "expo-sqlite",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "backgroundColor": "#080D10",
+          "image": "./src/assets/branding/logo-mark-transparent.png",
+          "imageWidth": 160,
+          "dark": {
+            "backgroundColor": "#080D10",
+            "image": "./src/assets/branding/logo-mark-transparent.png",
+            "imageWidth": 160
+          }
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/branding/logo-mark-transparent.png",
+          "color": "#3478F6"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.4"
+          }
         }
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
     }
   }
 }
