@@ -39,5 +39,12 @@ yarn-error.*
 example
 
 # generated native folders
-/ios
 /android
+
+# iOS generated/local files
+/ios/Pods/
+/ios/build/
+/ios/DerivedData/
+/ios/.xcode.env.local
+/ios/**/xcuserdata/
+/ios/**/*.xcuserstate
