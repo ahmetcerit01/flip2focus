@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { ActivityIndicator, GestureResponderEvent, Pressable, StyleSheet, ViewStyle } from 'react-native';
+import { ActivityIndicator, GestureResponderEvent, Pressable, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { Palette } from '@/theme/tokens';
 
@@ -11,10 +11,13 @@ interface GradientButtonProps {
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
+  /** Rendered pinned to the trailing edge while the label stays centered. */
   icon?: React.ReactNode;
+  radius?: number;
+  height?: number;
 }
 
-export function GradientButton({ label, onPress, disabled, loading, style, icon }: GradientButtonProps) {
+export function GradientButton({ label, onPress, disabled, loading, style, icon, radius = 999, height = 54 }: GradientButtonProps) {
   return (
     <Pressable onPress={onPress} disabled={disabled || loading} style={style}>
       {({ pressed }) => (
@@ -22,17 +25,22 @@ export function GradientButton({ label, onPress, disabled, loading, style, icon 
           colors={[Palette.blue, Palette.mint, Palette.lime]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={[styles.gradient, (disabled || pressed) && styles.dimmed]}
+          style={[styles.gradient, { borderRadius: radius, height }, (disabled || pressed) && styles.dimmed]}
         >
           {loading ? (
             <ActivityIndicator color="#06090B" />
-          ) : (
-            <>
-              <AppText weight="semibold" color="#06090B" style={styles.label}>
+          ) : icon ? (
+            <View style={styles.balancedRow}>
+              <View style={styles.balanceSpacer} />
+              <AppText weight="semibold" color="#06090B" style={styles.labelCentered}>
                 {label}
               </AppText>
-              {icon}
-            </>
+              <View style={styles.iconSlot}>{icon}</View>
+            </View>
+          ) : (
+            <AppText weight="semibold" color="#06090B" style={styles.label}>
+              {label}
+            </AppText>
           )}
         </LinearGradient>
       )}
@@ -42,15 +50,30 @@ export function GradientButton({ label, onPress, disabled, loading, style, icon 
 
 const styles = StyleSheet.create({
   gradient: {
-    height: 54,
-    borderRadius: 999,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    paddingHorizontal: 6,
+  },
+  balancedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    paddingHorizontal: 14,
+  },
+  balanceSpacer: {
+    width: 22,
+  },
+  iconSlot: {
+    width: 22,
+    alignItems: 'flex-end',
   },
   label: {
     fontSize: 17,
+  },
+  labelCentered: {
+    flex: 1,
+    fontSize: 17,
+    textAlign: 'center',
   },
   dimmed: {
     opacity: 0.85,

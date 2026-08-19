@@ -18,7 +18,7 @@ export default function ScreenTimeDeniedScreen() {
     setRetrying(true);
     try {
       const status = await requestScreenTimeAuthorization();
-      if (status === 'approved') router.replace('/onboarding/apps');
+      if (status === 'approved') router.replace('/onboarding/screentime');
     } finally {
       setRetrying(false);
     }
