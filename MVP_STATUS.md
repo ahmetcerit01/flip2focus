@@ -1,6 +1,6 @@
 # Flip2Focus MVP Status
 
-Last updated: 2026-08-19 (native build verified — Flip2Focus, Flip2FocusMonitor, Flip2FocusShield all build successfully)
+Last updated: 2026-08-19 (native build verified; first 3 onboarding screens visually verified against docs/ui-reference.png on-device)
 
 ## Completed
 
@@ -17,7 +17,9 @@ Last updated: 2026-08-19 (native build verified — Flip2Focus, Flip2FocusMonito
 - Zustand stores: settings (persisted via AsyncStorage), focus (session lifecycle), stats, screen time, purchases, duration selection.
 
 **Phase C — UI**
-- Full screen set implemented and wired via Expo Router: splash (native launch screen) → onboarding (value, Screen Time explanation, denied/recovery, app picker, flip tutorial) → tabs (Home, History, Settings) → Active Focus (+ grace overlay) → Session Complete → Session Interrupted → Break → Settings subpages (Appearance, Blocked Apps, Help/How-it-works, About) → Paywall (+ purchase/restore states) → dev-only Motion Diagnostics.
+- Full screen set implemented and wired via Expo Router: onboarding (animated splash → value → merged Screen Time + app-blocking Setup → denied/recovery → flip tutorial) → tabs (Home, History, Settings) → Active Focus (+ grace overlay) → Session Complete → Session Interrupted → Break → Settings subpages (Appearance, Blocked Apps, Help/How-it-works, About) → Paywall (+ purchase/restore states) → dev-only Motion Diagnostics.
+- The first 3 onboarding screens (Splash, Value, Setup) were pixel-matched against `docs/ui-reference.png` by actually running the app on an iPhone 16 Pro simulator (real `expo run:ios` install, not a mockup) and iterating from real screenshots: left-aligned (not centered) headlines, phone-demo row with per-side labels, page-dot indicator, gradient CTA with a trailing-edge icon, and an animated hero (breathing scale, soft multi-layer glow tuned from a hard-edged blob to a true soft ellipse, thin pulsing rings) on the splash screen. The merged Setup screen (permission card + block-apps card) intentionally does not hardcode a 5-app toggle list like the reference mockup — it uses one real, `FamilyActivityPicker`-backed row so the visual density is close without faking selection data, per the explicit instruction to keep app selection real.
+- Reanimated (`react-native-reanimated`, already an SDK-bundled dependency) is now actively used for entrance/loop animations on these 3 screens — first real runtime exercise of it in this project; no issues observed.
 - Centralized semantic theme tokens (`src/theme`) with System/Light/Dark modes reacting to `useColorScheme()`; Splash/onboarding hero/Active Focus/Paywall intentionally stay dark per spec.
 - No fake user name, no fake stats, no hardcoded blocked-app list, no Focus Points/Tree Grown/Focus Score anywhere.
 
@@ -94,4 +96,5 @@ Last updated: 2026-08-19 (native build verified — Flip2Focus, Flip2FocusMonito
 - `npx expo lint` — pass.
 - `npx expo-doctor` — 16/18 pass (2 expected/false-positive, documented above).
 - `xcodebuild … -scheme Flip2Focus … build` for iOS Simulator (iPhone 16 Pro, iOS 18.0) — **BUILD SUCCEEDED**, all 3 targets (Flip2Focus, Flip2FocusMonitor, Flip2FocusShield) compiled and linked; App Group + Family Controls entitlements present in the built product.
-- Did NOT run/test on a physical device (not available in this environment) and did NOT exercise real Screen Time authorization/shielding at runtime (simulator FamilyControls support is limited/unreliable even when it compiles).
+- `npx expo run:ios` — installed and launched the real dev-client build on the iPhone 16 Pro simulator (not just a compile check). Navigated to and screenshotted the Splash, Value, and Setup screens; iterated the splash glow visual directly from screenshots until it matched. Also incidentally observed: the real `requestAuthorization()` native call correctly surfaces iOS's actual Screen Time consent prompt ("Enter iPhone Passcode… to allow Flip2Focus to access Screen Time"), and the Paywall screen renders its "not configured" state correctly — both good signs the wiring is real, not mocked.
+- Did NOT run/test on a physical device (not available in this environment) and did NOT complete a full end-to-end Screen Time authorization (simulator has no passcode configured, so the consent dialog can't be completed there) or verify actual app shielding at runtime.
