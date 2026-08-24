@@ -1,4 +1,3 @@
-import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -6,13 +5,13 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/AppText';
 import { Icon } from '@/components/ui/Icon';
 import { Screen } from '@/components/ui/Screen';
+import { FocusOrb } from '@/components/focus/FocusOrb';
+import { WaveBackground } from '@/components/focus/WaveBackground';
 import { formatClock } from '@/lib/format';
 import { usePickupDetector } from '@/services/motion/usePickupDetector';
 import { useFocusStore } from '@/stores/focusStore';
 import { useScreenTimeStore } from '@/stores/screenTimeStore';
 import { useDarkTheme } from '@/theme/ThemeProvider';
-
-const focusOrb = require('@/assets/branding/focus-orb.png');
 
 export default function ActiveFocusScreen() {
   const { colors } = useDarkTheme();
@@ -88,17 +87,26 @@ export default function ActiveFocusScreen() {
     ? Math.floor((now - activeSession.startedAt) / 1000)
     : Math.max(0, Math.ceil(((activeSession.targetEndAt ?? now) - now) / 1000));
 
+  const orbProgress =
+    !isFree && activeSession.plannedSeconds
+      ? Math.min(1, Math.max(0, (now - activeSession.startedAt) / (activeSession.plannedSeconds * 1000)))
+      : null;
+
   const handleEndSession = () => {
     useFocusStore.getState().endSessionManually();
   };
 
   return (
-    <Screen forceDark contentContainerStyle={styles.container}>
-      <View style={[styles.pill, { backgroundColor: colors.surface }]}>
-        <View style={[styles.dot, { backgroundColor: colors.accentLime }]} />
-        <AppText variant="small" weight="medium">
-          Focus Mode
-        </AppText>
+    <Screen forceDark padded={false} contentContainerStyle={styles.container}>
+      <WaveBackground />
+
+      <View style={styles.pillWrap}>
+        <View style={[styles.pill, { backgroundColor: colors.surface }]}>
+          <View style={[styles.dot, { backgroundColor: colors.accentLime }]} />
+          <AppText variant="small" weight="medium">
+            Focus Mode
+          </AppText>
+        </View>
       </View>
 
       <View style={styles.center}>
@@ -110,27 +118,37 @@ export default function ActiveFocusScreen() {
         </AppText>
 
         <View style={styles.orbWrap}>
-          <Image source={focusOrb} style={styles.orb} contentFit="contain" />
+          <FocusOrb progress={orbProgress} />
         </View>
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.blockedRow}>
-          <Icon name="shield.fill" size={14} color={colors.accentMint} />
-          <AppText variant="small" muted>
-            {blockedAppCount} app{blockedAppCount === 1 ? '' : 's'} blocked
-          </AppText>
+        <View style={[styles.blockedCard, { backgroundColor: colors.surface }]}>
+          <View style={[styles.blockedIconWrap, { backgroundColor: colors.surfaceRaised }]}>
+            <Icon name="shield.fill" size={15} color={colors.accentMint} />
+          </View>
+          <View style={styles.blockedTextWrap}>
+            <AppText variant="small" weight="medium">
+              Blocked Apps
+            </AppText>
+            <AppText variant="caption" muted>
+              {blockedAppCount > 0
+                ? `${blockedAppCount} app${blockedAppCount === 1 ? '' : 's'} shielded this session`
+                : 'No apps selected'}
+            </AppText>
+          </View>
         </View>
-        <Pressable onPress={handleEndSession} style={[styles.endButton, { backgroundColor: colors.surface }]}>
+
+        <Pressable onPress={handleEndSession} style={styles.endButton}>
           <AppText weight="medium" secondary>
             End Session
           </AppText>
-          <Icon name="chevron.right" size={14} color={colors.textMuted} />
+          <Icon name="chevron.right" size={13} color={colors.textMuted} />
         </Pressable>
       </View>
 
       {phase === 'grace' ? (
-        <View style={[styles.graceOverlay, { backgroundColor: 'rgba(8,13,16,0.92)' }]}>
+        <View style={[styles.graceOverlay, { backgroundColor: 'rgba(8,13,16,0.94)' }]}>
           <Icon name="hand.raised.fill" size={32} color={colors.warning} />
           <AppText variant="title" weight="semibold" style={{ marginTop: 16 }}>
             Picked up
@@ -151,12 +169,15 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'space-between',
-    paddingTop: 12,
-    paddingBottom: 24,
+    paddingTop: 16,
+    paddingBottom: 28,
+    paddingHorizontal: 24,
+  },
+  pillWrap: {
+    alignItems: 'center',
   },
   pill: {
     flexDirection: 'row',
-    alignSelf: 'center',
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: 14,
@@ -179,35 +200,37 @@ const styles = StyleSheet.create({
   supportText: {
     marginTop: 10,
     lineHeight: 20,
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
   },
   orbWrap: {
-    marginTop: 36,
-    width: 240,
-    height: 240,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  orb: {
-    width: '100%',
-    height: '100%',
+    marginTop: 40,
   },
   footer: {
-    gap: 16,
+    gap: 14,
   },
-  blockedRow: {
+  blockedCard: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
+    borderRadius: 16,
+    padding: 12,
+  },
+  blockedIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+  },
+  blockedTextWrap: {
+    flex: 1,
   },
   endButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    height: 50,
-    borderRadius: 999,
+    height: 46,
   },
   graceOverlay: {
     position: 'absolute',

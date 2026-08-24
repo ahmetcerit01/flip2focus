@@ -11,10 +11,10 @@ export default function OnboardingLayout() {
         animation: 'fade',
       }}
     >
+      <Stack.Screen name="splash" />
       <Stack.Screen name="value" />
       <Stack.Screen name="screentime" />
       <Stack.Screen name="screentime-denied" />
-      <Stack.Screen name="apps" />
       <Stack.Screen name="tutorial" />
     </Stack>
   );
